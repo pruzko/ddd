@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "ddd"
+version = "0.1.0"
+description = "Digital Dumpster Diver"
+readme = "README.md"
+requires-python = ">=3"
+dependencies = [
+    "faiss-cpu",
+]
+
+[tool.hatch.build]
+include = ["ddd/**"]

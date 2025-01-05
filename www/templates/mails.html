@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDD</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        html, body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        p {
+            margin: 0;
+        }
+        #searchInput {
+            margin-top: 48px;
+            margin-bottom: 68px;
+            width: 100%;
+        }
+        .mailHdr {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            height: 48px;
+        }
+        .mailHdr {
+            padding-right: 16px;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #stats {
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+            color: gray;
+            margin-bottom: 8px;
+        }
+        #stats p {
+            margin-top: 10px;
+            margin-right: 32px;
+        }
+        #stats a {
+            display: flex;
+            align-content: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            font-size: 20px;
+            background: none;
+            border: none;
+            color: gray;
+        }
+        #stats a:hover {
+            background: lightgrey;
+            border-radius: 100px;
+            color: black;
+        }
+        .sender {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 12px;
+        }
+
+        .row-details {
+            transition: height 0.5s ease;
+            height: 0;
+            overflow: hidden;
+        }
+        .row-details.show {
+            height: auto;
+        }
+        .card {
+            margin-top: 4px;
+        }
+        .dbg {
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container col-7">
+        <form class="form-inline" action="/mails" method="get">
+            <input type="text" id="searchInput" class="form-control" name="q" placeholder="Search..." value="{{q}}">
+        </form>
+
+        <div id=stats>
+            <p style="font-size: 12px;">{{ page * 10 }} - {{ page * 10 + mails | length }} out of {{ total }}</p>
+            <a id="prevPage" href="mails?q={{ q }}&page={{ [page - 1, 0] | max }}">‹</a>
+            <a id="nextPage" href="mails?q={{ q }}&page={{ [page + 1, total // 10] | min }}">›</a>
+        </div>
+        <div id="accordion">
+            {% for m in mails %}
+            <div class="card">
+                <div class="mailHdr card-header" id="heading{{loop.index}}" data-toggle="collapse" data-target="#collapse{{loop.index}}" aria-expanded="true" aria-controls="collapse{{loop.index}}">
+                    <p class="sender col-2">
+                        {{ m.sender_name or '' }}
+                    </p>
+                    <p>
+                        <span style="color: black;">{{ m.subject }}</span>
+                        <span style="color: gray; margin-left: 12px;">{{ ' '.join(m.body.split()) }}</span>
+                    </p>
+                </div>
+
+                <div id="collapse{{loop.index}}" class="collapse" aria-labelledby="heading{{loop.index}}">
+                    <div class="card-body">
+                        <p style="color: gray; font-size: 12px;">ID: {{ m.id }}</p>
+                        <p style="color: gray; font-size: 12px;">From: {{ m.sender }}</p>
+                        <p style="color: gray; font-size: 12px;">To: {{ m.receiver }}</p>
+                        <p>{{ m.body }}</p>
+                        {% for link in m.links %}
+                        <p style="margin: 0; font-size: 10px;">
+                            {{ loop.index }}
+                            <a href="{{link}}" target="_blank">{{ link }}</a>
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    <script type="text/javascript">
+        // document.addEventListener('keydown', (event) => {
+        //     if (event.keyCode === 37) {
+        //         document.getElementById('prevPage').click();
+        //     } else if (event.keyCode == 39) {
+        //         document.getElementById('nextPage').click();
+        //     } else if (event.keyCode == 191) {
+        //         if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        //             event.preventDefault();
+        //             document.getElementById('searchInput').focus();
+        //             document.getElementById('searchInput').select();
+        //         }
+        //     }
+        // });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
